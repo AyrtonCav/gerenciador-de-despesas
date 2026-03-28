@@ -1,0 +1,106 @@
+.expense-card {
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #e1e0de;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.expense-card__header {
+    display: flex;
+    align-items: center;
+}
+
+.expense-card__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #737B8C;
+    letter-spacing: -0.12px;
+}
+
+.expense-card__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.expense-card__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.expense-card__field--short {
+    max-width: 150px;
+}
+
+.expense-card__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1D212B;
+    letter-spacing: -0.1px;
+}
+
+.expense-card__input {
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid #e2dfd8;
+    background-color: #f9f7f3;
+    color: #4b5563;
+    font-size: 14px;
+    line-height: 1.25;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.expense-card__input:focus {
+    outline: none;
+    border-color: #389475;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(56, 148, 117, 0.18);
+}
+
+.expense-card__select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #737B8C 50%), linear-gradient(135deg, #737B8C 50%, transparent 50%);
+    background-position: right 14px top 16px, right 8px top 16px;
+    background-size: 8px 8px, 8px 8px;
+    background-repeat: no-repeat;
+    padding-right: 32px;
+}
+
+.expense-card__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background-color: #389475;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    cursor: pointer;
+    box-shadow: 0 12px 24px -12px rgba(56, 148, 117, 0.6);
+    transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.expense-card__submit:hover {
+    filter: brightness(1.05);
+    box-shadow: 0 14px 26px -12px rgba(56, 148, 117, 0.7);
+}
+
+.expense-card__submit:active {
+    transform: translateY(0.5px);
+}

@@ -1,0 +1,8 @@
+main.page {
+	width: min(900px, 100%);
+	margin: 0 auto;
+	padding: 0 32px 96px;
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+}
