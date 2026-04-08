@@ -61,7 +61,7 @@ function ExpenseEditCard({ expense, onSave, onCancel }: ExpenseEditCardProps) {
           <span className="expense-edit__label">Valor (R$)</span>
           <input
             className="expense-edit__input"
-            type="number"
+            type="text"
             step="0.01"
             value={draft.value}
             onChange={(event) => handleChange('value', event.target.value)}
