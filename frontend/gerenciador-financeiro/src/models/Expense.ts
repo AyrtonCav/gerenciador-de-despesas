@@ -17,6 +17,18 @@ export interface IExpense {
   updated_at?: string
 }
 
+type ExpenseApiData = Omit<IExpense, 'id' | 'value'> & {
+  id: string | number
+  value: string | number
+}
+
+export type ExpensePayload = {
+  description: string
+  category: ExpenseCategory
+  value: number
+  date: string
+}
+
 /**
  * Classe Expense - MODEL no padrão MVC
  * 
@@ -45,13 +57,9 @@ export class Expense implements IExpense {
     this.updated_at = data.updated_at
   }
 
-  // ============================================
-  // MÉTODOS DE FORMATAÇÃO (APRESENTAÇÃO)
-  // ============================================
 
-  /**
-   * Formata o valor em reais (R$)
-   */
+  // Formatação de dados:
+
   formatValue(): string {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -59,19 +67,9 @@ export class Expense implements IExpense {
     }).format(this.value)
   }
 
-  /**
-   * Formata a data em formato brasileiro (dd/mm/yyyy)
-   */
   formatDate(): string {
     const [year, month, day] = this.date.split('-')
     return `${day}/${month}/${year}`
-  }
-
-  /**
-   * Retorna a data como objeto Date
-   */
-  getDateObject(): Date {
-    return new Date(this.date + 'T00:00:00')
   }
 
   getCategoryLabel(): string {
@@ -134,12 +132,12 @@ export class Expense implements IExpense {
   /**
    * Converte dados brutos da API em instância de Expense
    */
-  static fromAPI(data: any): Expense {
+  static fromAPI(data: ExpenseApiData): Expense {
     return new Expense({
       id: String(data.id),
       description: data.description,
       category: data.category,
-      value: parseFloat(data.value),
+      value: parseFloat(String(data.value)),
       date: data.date,
       created_at: data.created_at,
       updated_at: data.updated_at,
@@ -149,7 +147,7 @@ export class Expense implements IExpense {
   /**
    * Converte instância para formato de envio à API
    */
-  toAPI(): Partial<IExpense> {
+  toAPI(): ExpensePayload {
     return {
       description: this.description,
       category: this.category,
@@ -162,7 +160,7 @@ export class Expense implements IExpense {
 /**
  * Tipo para criação de nova despesa (sem ID)
  */
-export type ExpenseInput = Omit<IExpense, 'id'>
+export type ExpenseInput = ExpensePayload
 
 /**
  * Constantes úteis

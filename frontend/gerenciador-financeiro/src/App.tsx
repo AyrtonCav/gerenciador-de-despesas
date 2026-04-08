@@ -5,41 +5,8 @@ import CardTotal from './views/components/CardTotal/CardTotal'
 import ExpenseForm from './views/components/ExpenseForm/ExpenseForm'
 import ExpenseList from './views/components/ExpenseList/ExpenseList'
 import ExpenseEditCard from './views/components/ExpenseEditCard/ExpenseEditCard'
-import { Expense, type ExpenseInput, type IExpense } from './models/Expense'
-
-const API_BASE_URL = 'http://127.0.0.1:8000/api'
-const EXPENSES_ENDPOINT = `${API_BASE_URL}/expenses/`
-
-class APIError extends Error {
-  status: number
-
-  constructor(message: string, status: number) {
-    super(message)
-    this.name = 'APIError'
-    this.status = status
-  }
-}
-
-async function fetchAPI<T>(url: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-  })
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new APIError(errorData.message || `Erro HTTP ${response.status}`, response.status)
-  }
-
-  if (response.status === 204) {
-    return {} as T
-  }
-
-  return response.json() as Promise<T>
-}
+import { Expense, type ExpenseInput } from './models/Expense'
+import { APIError, expenseService } from './services/expenseService'
 
 function App() {
   const [expenses, setExpenses] = useState<Expense[]>([])
@@ -58,12 +25,17 @@ function App() {
 
   const totalValue = expenses.reduce((accumulator, expense) => accumulator + expense.value, 0)
 
+  const showError = (message: string) => {
+    setError(message)
+    alert(message)
+  }
+
   const loadExpenses = async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await fetchAPI<IExpense[]>(EXPENSES_ENDPOINT)
-      setExpenses(data.map((item) => Expense.fromAPI(item)))
+      const data = await expenseService.listExpenses()
+      setExpenses(data)
     } catch (err) {
       const message = err instanceof APIError ? err.message : 'Erro ao carregar despesas'
       setError(message)
@@ -75,21 +47,18 @@ function App() {
   const addExpense = async (input: ExpenseInput): Promise<boolean> => {
     const validationErrors = Expense.validate(input)
     if (Expense.hasErrors(validationErrors)) {
-      setError(Object.values(validationErrors)[0])
+      showError(Object.values(validationErrors)[0])
       return false
     }
 
     try {
       setError(null)
-      const created = await fetchAPI<IExpense>(EXPENSES_ENDPOINT, {
-        method: 'POST',
-        body: JSON.stringify(input),
-      })
-      setExpenses((prev) => [Expense.fromAPI(created), ...prev])
+      const created = await expenseService.createExpense(input)
+      setExpenses((prev) => [created, ...prev])
       return true
     } catch (err) {
       const message = err instanceof APIError ? err.message : 'Erro ao adicionar despesa'
-      setError(message)
+      showError(message)
       return false
     }
   }
@@ -97,21 +66,18 @@ function App() {
   const updateExpense = async (expense: Expense): Promise<boolean> => {
     const validationErrors = Expense.validate(expense)
     if (Expense.hasErrors(validationErrors)) {
-      setError(Object.values(validationErrors)[0])
+      showError(Object.values(validationErrors)[0])
       return false
     }
 
     try {
       setError(null)
-      const updated = await fetchAPI<IExpense>(`${EXPENSES_ENDPOINT}${expense.id}/`, {
-        method: 'PUT',
-        body: JSON.stringify(expense.toAPI()),
-      })
-      setExpenses((prev) => prev.map((item) => (item.id === updated.id ? Expense.fromAPI(updated) : item)))
+      const updated = await expenseService.updateExpense(expense)
+      setExpenses((prev) => prev.map((item) => (item.id === updated.id ? updated : item)))
       return true
     } catch (err) {
       const message = err instanceof APIError ? err.message : 'Erro ao atualizar despesa'
-      setError(message)
+      showError(message)
       return false
     }
   }
@@ -119,36 +85,24 @@ function App() {
   const deleteExpense = async (id: string): Promise<boolean> => {
     try {
       setError(null)
-      await fetchAPI<void>(`${EXPENSES_ENDPOINT}${id}/`, {
-        method: 'DELETE',
-      })
+      await expenseService.deleteExpense(id)
       setExpenses((prev) => prev.filter((item) => item.id !== id))
       return true
     } catch (err) {
       const message = err instanceof APIError ? err.message : 'Erro ao deletar despesa'
-      setError(message)
+      showError(message)
       return false
     }
   }
 
-  const clearError = () => setError(null)
-
   const handleAdd = async (input: ExpenseInput) => {
-    const success = await addExpense(input)
-    if (!success && error) {
-      alert(error)
-      clearError()
-    }
+    await addExpense(input)
   }
 
   const handleDelete = async (id: string) => {
-    const success = await deleteExpense(id)
+    await deleteExpense(id)
     if (editingId === id) {
       setEditingId(null)
-    }
-    if (!success && error) {
-      alert(error)
-      clearError()
     }
   }
 
@@ -156,9 +110,6 @@ function App() {
     const success = await updateExpense(updated)
     if (success) {
       setEditingId(null)
-    } else if (error) {
-      alert(error)
-      clearError()
     }
   }
 
