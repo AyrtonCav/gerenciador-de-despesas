@@ -1,27 +1,17 @@
 import './ExpenseForm.css'
 import { Plus } from 'lucide-react'
 import { useMemo, useState, type FormEvent } from 'react'
-import { type ExpenseInput } from '../../../controllers/expenseController'
-import { type ExpenseCategory } from '../../../models/Expense'
-
-interface CategoryOption {
-  value: string
-  label: string
-}
+import { CATEGORY_LABELS, EXPENSE_CATEGORIES, type ExpenseCategory, type ExpenseInput } from '../../../models/Expense'
 
 interface ExpenseFormProps {
-  categories: readonly CategoryOption[]
   onSubmit: (input: ExpenseInput) => void
 }
 
 const normalizeNumber = (value: string) => Number(value.replace(',', '.')) || 0
 
-function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
+function ExpenseForm({ onSubmit }: ExpenseFormProps) {
   const today = useMemo(() => new Date().toISOString().split('T')[0], [])
-  const defaultCategory = useMemo<ExpenseCategory>(
-    () => (categories.find((option) => option.value !== 'todas')?.value as ExpenseCategory) ?? 'outros',
-    [categories],
-  )
+  const defaultCategory = 'outros' as ExpenseCategory
 
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState<ExpenseCategory>(defaultCategory)
@@ -63,13 +53,11 @@ function ExpenseForm({ categories, onSubmit }: ExpenseFormProps) {
             value={category}
             onChange={(event) => setCategory(event.target.value as ExpenseCategory)}
           >
-            {categories
-              .filter((option) => option.value !== 'todas')
-              .map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+            {EXPENSE_CATEGORIES.map((value) => (
+              <option key={value} value={value}>
+                {CATEGORY_LABELS[value]}
+              </option>
+            ))}
           </select>
         </label>
 

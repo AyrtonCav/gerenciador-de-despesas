@@ -1,21 +1,15 @@
 import './ExpenseEditCard.css'
 import { X, Save } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
-import { type Expense } from '../../../models/Expense'
-
-interface CategoryOption {
-  value: string
-  label: string
-}
+import { CATEGORY_LABELS, EXPENSE_CATEGORIES, Expense } from '../../../models/Expense'
 
 interface ExpenseEditCardProps {
   expense: Expense
-  categories: readonly CategoryOption[]
   onSave: (updated: Expense) => void
   onCancel: () => void
 }
 
-function ExpenseEditCard({ expense, categories, onSave, onCancel }: ExpenseEditCardProps) {
+function ExpenseEditCard({ expense, onSave, onCancel }: ExpenseEditCardProps) {
   const [draft, setDraft] = useState<Expense>(expense)
 
   useEffect(() => {
@@ -23,7 +17,10 @@ function ExpenseEditCard({ expense, categories, onSave, onCancel }: ExpenseEditC
   }, [expense])
 
   const handleChange = (field: keyof Expense, value: string) => {
-    setDraft((prev) => ({ ...prev, [field]: field === 'value' ? Number(value) || 0 : value }))
+    setDraft((prev) => new Expense({
+      ...prev,
+      [field]: field === 'value' ? Number(value) || 0 : value,
+    } as Expense))
   }
 
   const handleSubmit = (event: FormEvent) => {
@@ -52,13 +49,11 @@ function ExpenseEditCard({ expense, categories, onSave, onCancel }: ExpenseEditC
             value={draft.category}
             onChange={(event) => handleChange('category', event.target.value)}
           >
-            {categories
-              .filter((option) => option.value !== 'todas')
-              .map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+            {EXPENSE_CATEGORIES.map((value) => (
+              <option key={value} value={value}>
+                {CATEGORY_LABELS[value]}
+              </option>
+            ))}
           </select>
         </label>
 

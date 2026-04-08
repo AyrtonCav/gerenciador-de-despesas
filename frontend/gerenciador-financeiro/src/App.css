@@ -6,3 +6,12 @@ main.page {
 	flex-direction: column;
 	gap: 48px;
 }
+
+.page__error {
+	padding: 14px 16px;
+	border-radius: 12px;
+	border: 1px solid #f2c5c5;
+	background: #fff5f5;
+	color: #8c2f2f;
+	font-weight: 600;
+}
