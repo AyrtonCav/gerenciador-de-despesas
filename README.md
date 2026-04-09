@@ -87,7 +87,7 @@ Gerenciamento Financeiro/                      ← Raiz do projeto
         │   ├── App.css                       ← Estilos principais da aplicação
         │   ├── index.css                     ← Estilos globais e base visual
         │   │
-        │   ├── models/                       ← Modelos e validações do frontend
+        │   ├── models/                       
         │   │   └── Expense.ts                ← Classe/tipos de despesa e validações
         │   │
         │   ├── services/                     ← Serviços de integração com a API
