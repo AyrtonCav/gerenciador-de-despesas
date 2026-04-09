@@ -49,9 +49,6 @@ Este projeto é ideal para fins educacionais, demonstrando:
 ```text
 Gerenciamento Financeiro/                      ← Raiz do projeto
 │
-├── ARQUITETURA_MVC.md                        ← Explica a arquitetura MVC adotada
-├── GUIA_RAPIDO.md                            ← Guia resumido de uso e manutenção
-├── IMPLEMENTACAO_COMPLETA.md                 ← Documentação técnica detalhada
 │
 ├── backend/                                  ← Aplicação Django e API REST
 │   ├── manage.py                             ← CLI do Django (runserver, migrate, test)
